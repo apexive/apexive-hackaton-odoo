@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Main Menu -->
+        <menuitem id="menu_social_media_main"
+                  name="Social Media"
+                  sequence="40"/>
+        
+        <!-- Provider Menu -->
+        <menuitem id="menu_social_media_providers"
+                  name="Providers"
+                  parent="menu_social_media_main"
+                  action="action_social_media_provider"
+                  sequence="10"/>
+        
+        <!-- Account Menu -->
+        <menuitem id="menu_social_media_accounts"
+                  name="My Accounts"
+                  parent="menu_social_media_main"
+                  action="action_social_media_account"
+                  sequence="20"/>
+        
+        <!-- Posts Menu -->
+        <menuitem id="menu_social_media_posts"
+                  name="Posts"
+                  parent="menu_social_media_main"
+                  action="action_social_media_post"
+                  sequence="30"/>
+        
+        <!-- Filters Menu -->
+        <menuitem id="menu_social_media_filters"
+                  name="Filters"
+                  parent="menu_social_media_main"
+                  action="action_social_media_filter"
+                  sequence="40"/>
+        
+        <!-- Configuration Menu -->
+        <menuitem id="menu_social_media_config"
+                  name="Configuration"
+                  parent="menu_social_media_main"
+                  sequence="100"/>
+        
+        <!-- Profiles Menu (under Configuration) -->
+        <menuitem id="menu_social_media_profiles"
+                  name="Profiles"
+                  parent="menu_social_media_config"
+                  action="action_social_media_profile"
+                  sequence="10"/>
+        
+    </data>
+</odoo>

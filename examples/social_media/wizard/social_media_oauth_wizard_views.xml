@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- OAuth Wizard Form View -->
+        <record id="view_social_media_oauth_wizard_form" model="ir.ui.view">
+            <field name="name">social.media.oauth.wizard.form</field>
+            <field name="model">social_media.oauth.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Connect Social Media Account">
+                    <field name="step" invisible="1"/>
+                    <div class="alert alert-info" attrs="{'invisible': [('step', '!=', 'start')]}">
+                        <h4>Connect Your Social Media Account</h4>
+                        <p>
+                            Select a provider and click "Start OAuth" to begin the authorization process.
+                            You'll be redirected to the social media platform to authorize access.
+                        </p>
+                    </div>
+                    
+                    <div class="alert alert-warning" attrs="{'invisible': [('step', '!=', 'authorize')]}">
+                        <h4>Authorization Required</h4>
+                        <p>
+                            Click "Open Authorization URL" to authorize your account.
+                            After authorizing, you'll be redirected back to complete the process.
+                        </p>
+                    </div>
+                    
+                    <div class="alert alert-success" attrs="{'invisible': [('step', '!=', 'complete')]}">
+                        <h4>Account Connected Successfully!</h4>
+                        <p>
+                            Your social media account has been connected successfully.
+                            You can now sync your following list and fetch posts.
+                        </p>
+                    </div>
+                    
+                    <group attrs="{'invisible': [('step', '!=', 'start')]}">
+                        <field name="provider_id" options="{'no_create': True}" domain="[('active', '=', True)]"/>
+                        <field name="account_name" placeholder="My Twitter Account"/>
+                    </group>
+                    
+                    <group attrs="{'invisible': [('step', '!=', 'authorize')]}">
+                        <field name="provider_id" readonly="1"/>
+                        <field name="account_name" readonly="1"/>
+                        <field name="auth_url" readonly="1" widget="url"/>
+                    </group>
+                    
+                    <footer>
+                        <button name="action_start_oauth" type="object" string="Start OAuth" class="btn-primary" attrs="{'invisible': [('step', '!=', 'start')]}"/>
+                        <button name="action_test_connection" type="object" string="Test Connection" class="btn-secondary" attrs="{'invisible': [('step', '!=', 'start')]}"/>
+                        
+                        <button name="action_open_authorization_url" type="object" string="Open Authorization URL" class="btn-primary" attrs="{'invisible': [('step', '!=', 'authorize')]}"/>
+                        
+                        <button name="action_cancel" type="object" string="Cancel" class="btn-secondary"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        
+        <!-- OAuth Wizard Action -->
+        <record id="action_social_media_oauth_wizard" model="ir.actions.act_window">
+            <field name="name">Connect Social Media Account</field>
+            <field name="res_model">social_media.oauth.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+        
+        <!-- Add Connect Account button to Provider form -->
+        <record id="view_social_media_provider_form_connect_button" model="ir.ui.view">
+            <field name="name">social.media.provider.form.connect.button</field>
+            <field name="model">social_media.provider</field>
+            <field name="inherit_id" ref="view_social_media_provider_form"/>
+            <field name="arch" type="xml">
+                <div class="oe_button_box" position="inside">
+                    <button name="%(action_social_media_oauth_wizard)d" type="action" 
+                            class="oe_stat_button" icon="fa-plus" 
+                            context="{'default_provider_id': active_id}"
+                            string="Connect Account"/>
+                </div>
+            </field>
+        </record>
+        
+        <!-- Add Connect Account button to Account list -->
+        <record id="view_social_media_account_tree_connect_button" model="ir.ui.view">
+            <field name="name">social.media.account.tree.connect.button</field>
+            <field name="model">social_media.account</field>
+            <field name="inherit_id" ref="view_social_media_account_tree"/>
+            <field name="arch" type="xml">
+                <tree position="inside">
+                    <header>
+                        <button name="%(action_social_media_oauth_wizard)d" type="action" 
+                                string="Connect New Account" class="btn-primary"/>
+                    </header>
+                </tree>
+            </field>
+        </record>
+        
+    </data>
+</odoo>

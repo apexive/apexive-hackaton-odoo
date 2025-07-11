@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Post Tree View -->
+        <record id="view_social_media_post_tree" model="ir.ui.view">
+            <field name="name">social.media.post.tree</field>
+            <field name="model">social_media.post</field>
+            <field name="arch" type="xml">
+                <tree string="Social Media Posts">
+                    <field name="service"/>
+                    <field name="profile_id"/>
+                    <field name="content"/>
+                    <field name="posted_at"/>
+                    <field name="fetched_at"/>
+                </tree>
+            </field>
+        </record>
+        
+        <!-- Post Form View -->
+        <record id="view_social_media_post_form" model="ir.ui.view">
+            <field name="name">social.media.post.form</field>
+            <field name="model">social_media.post</field>
+            <field name="arch" type="xml">
+                <form string="Social Media Post">
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="profile_id"/>
+                            </h1>
+                        </div>
+                        
+                        <group>
+                            <group>
+                                <field name="service" readonly="1"/>
+                                <field name="account_id" readonly="1"/>
+                                <field name="profile_id" readonly="1"/>
+                                <field name="external_post_id" readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="posted_at" readonly="1"/>
+                                <field name="fetched_at" readonly="1"/>
+                            </group>
+                        </group>
+                        
+                        <group string="Content">
+                            <field name="content" widget="text" readonly="1"/>
+                        </group>
+                        
+                        
+                        <group string="Post Metadata" attrs="{'invisible': [('post_metadata', '=', False)]}">
+                            <field name="post_metadata" widget="ace" options="{'mode': 'json'}" readonly="1"/>
+                        </group>
+                    </sheet>
+                    
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        
+        <!-- Post Search View -->
+        <record id="view_social_media_post_search" model="ir.ui.view">
+            <field name="name">social.media.post.search</field>
+            <field name="model">social_media.post</field>
+            <field name="arch" type="xml">
+                <search string="Search Posts">
+                    <field name="content"/>
+                    <field name="service"/>
+                    <field name="account_id"/>
+                    <field name="profile_id"/>
+                    
+                    <filter name="filter_today" string="Today" domain="[('posted_at', '&gt;=', datetime.datetime.now().strftime('%Y-%m-%d'))]"/>
+                    <filter name="filter_week" string="This Week" domain="[('posted_at', '&gt;=', (datetime.datetime.now() - datetime.timedelta(days=7)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="filter_month" string="This Month" domain="[('posted_at', '&gt;=', (datetime.datetime.now() - datetime.timedelta(days=30)).strftime('%Y-%m-%d'))]"/>
+                    
+                    <separator/>
+                    <filter name="filter_twitter" string="Twitter" domain="[('service', '=', 'twitter')]"/>
+                    <filter name="filter_facebook" string="Facebook" domain="[('service', '=', 'facebook')]"/>
+                    
+                    <separator/>
+                    
+                    <group expand="0" string="Group By">
+                        <filter name="group_by_service" string="Service" domain="[]" context="{'group_by': 'service'}"/>
+                        <filter name="group_by_author" string="Author" domain="[]" context="{'group_by': 'profile_id'}"/>
+                        <filter name="group_by_account" string="Account" domain="[]" context="{'group_by': 'account_id'}"/>
+                        <filter name="group_by_date" string="Posted Date" domain="[]" context="{'group_by': 'posted_at:day'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        
+        <!-- Post Action -->
+        <record id="action_social_media_post" model="ir.actions.act_window">
+            <field name="name">Social Media Posts</field>
+            <field name="res_model">social_media.post</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_social_media_post_search"/>
+            <field name="context">{'search_default_filter_week': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No posts found!
+                </p>
+                <p>
+                    Posts are automatically fetched when you sync your connected social media accounts.
+                    Go to your accounts and click "Fetch Posts" to get the latest content.
+                </p>
+            </field>
+        </record>
+        
+        <!-- Post Kanban View -->
+        <record id="view_social_media_post_kanban" model="ir.ui.view">
+            <field name="name">social.media.post.kanban</field>
+            <field name="model">social_media.post</field>
+            <field name="arch" type="xml">
+                <kanban string="Social Media Posts">
+                    <field name="author_display_name"/>
+                    <field name="author_username"/>
+                    <field name="content"/>
+                    <field name="posted_at"/>
+                    <field name="service"/>
+                    <field name="engagement_stats"/>
+                    <field name="post_url"/>
+                    <field name="profile_id"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_card oe_kanban_global_click">
+                                <div class="oe_kanban_content">
+                                    <div class="row">
+                                        <div class="col-2">
+                                            <span class="oe_kanban_avatar">
+                                                <i class="fa fa-user"/>
+                                            </span>
+                                        </div>
+                                        <div class="col-10">
+                                            <strong><field name="author_display_name"/></strong>
+                                            <span class="text-muted">@<field name="author_username"/></span>
+                                            <br/>
+                                            <span class="badge badge-pill badge-info"><field name="service"/></span>
+                                            <span class="text-muted float-right"><field name="posted_at"/></span>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <p class="oe_kanban_text_content">
+                                                <field name="content"/>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="row" t-if="record.engagement_stats.raw_value">
+                                        <div class="col-12">
+                                            <small class="text-muted">
+                                                <field name="engagement_stats"/>
+                                            </small>
+                                        </div>
+                                    </div>
+                                    <div class="row" t-if="record.post_url.raw_value">
+                                        <div class="col-12">
+                                            <a t-att-href="record.post_url.raw_value" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                <i class="fa fa-external-link"/> Open Original
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+        
+        <!-- Add Kanban to action -->
+        <record id="action_social_media_post" model="ir.actions.act_window">
+            <field name="view_mode">kanban,tree,form</field>
+        </record>
+        
+    </data>
+</odoo>

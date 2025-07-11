@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        
+        <!-- Default Twitter Provider -->
+        <record id="provider_twitter_default" model="social_media.provider">
+            <field name="name">Twitter API v2</field>
+            <field name="service">twitter</field>
+            <field name="api_version">v2</field>
+            <field name="oauth_authorize_url">https://twitter.com/i/oauth2/authorize</field>
+            <field name="oauth_token_url">https://api.twitter.com/2/oauth2/token</field>
+            <field name="api_base_url">https://api.twitter.com/2</field>
+            <field name="scopes">tweet.read,users.read,follows.read,offline.access</field>
+            <field name="sequence">10</field>
+            <field name="active">True</field>
+        </record>
+        
+        <!-- Default Facebook Provider -->
+        <record id="provider_facebook_default" model="social_media.provider">
+            <field name="name">Facebook Graph API</field>
+            <field name="service">facebook</field>
+            <field name="api_version">v18.0</field>
+            <field name="oauth_authorize_url">https://www.facebook.com/v18.0/dialog/oauth</field>
+            <field name="oauth_token_url">https://graph.facebook.com/v18.0/oauth/access_token</field>
+            <field name="api_base_url">https://graph.facebook.com/v18.0</field>
+            <field name="scopes">public_profile,email,user_posts,user_friends</field>
+            <field name="sequence">20</field>
+            <field name="active">True</field>
+        </record>
+        
+    </data>
+</odoo>

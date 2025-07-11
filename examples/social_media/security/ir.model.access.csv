@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_social_media_provider_user,social_media.provider.user,model_social_media_provider,base.group_user,1,1,1,1
+access_social_media_account_user,social_media.account.user,model_social_media_account,base.group_user,1,1,1,1
+access_social_media_profile_user,social_media.profile.user,model_social_media_profile,base.group_user,1,1,1,1
+access_social_media_post_user,social_media.post.user,model_social_media_post,base.group_user,1,1,1,1
+access_social_media_filter_user,social_media.filter.user,model_social_media_filter,base.group_user,1,1,1,1
+access_social_media_oauth_wizard_user,social_media.oauth.wizard.user,model_social_media_oauth_wizard,base.group_user,1,1,1,1

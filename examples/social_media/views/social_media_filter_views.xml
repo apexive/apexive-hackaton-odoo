@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Filter Tree View -->
+        <record id="view_social_media_filter_tree" model="ir.ui.view">
+            <field name="name">social.media.filter.tree</field>
+            <field name="model">social_media.filter</field>
+            <field name="arch" type="xml">
+                <tree string="Social Media Filters">
+                    <field name="sequence" widget="handle"/>
+                    <field name="name"/>
+                    <field name="filter_type"/>
+                    <field name="filter_value"/>
+                    <field name="filter_mode"/>
+                    <field name="match_count"/>
+                    <field name="last_applied"/>
+                    <field name="active" widget="boolean_toggle"/>
+                    <button name="action_test_filter" type="object" string="Test" icon="fa-play" class="btn-link"/>
+                </tree>
+            </field>
+        </record>
+        
+        <!-- Filter Form View -->
+        <record id="view_social_media_filter_form" model="ir.ui.view">
+            <field name="name">social.media.filter.form</field>
+            <field name="model">social_media.filter</field>
+            <field name="arch" type="xml">
+                <form string="Social Media Filter">
+                    <header>
+                        <button name="action_test_filter" type="object" string="Test Filter" class="btn-primary"/>
+                    </header>
+                    
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" placeholder="Filter Name"/>
+                            </h1>
+                        </div>
+                        
+                        <group>
+                            <group>
+                                <field name="filter_type"/>
+                                <field name="filter_mode"/>
+                                <field name="sequence"/>
+                                <field name="active"/>
+                            </group>
+                            <group>
+                                <field name="user_id" readonly="1"/>
+                                <field name="last_applied" readonly="1"/>
+                                <field name="match_count" readonly="1"/>
+                            </group>
+                        </group>
+                        
+                        <group string="Filter Configuration">
+                            <field name="filter_value" widget="text"/>
+                            <field name="description" widget="text"/>
+                        </group>
+                        
+                        <group string="Help">
+                            <div class="alert alert-info">
+                                <h4>Filter Type Help:</h4>
+                                <ul>
+                                    <li><strong>Keyword:</strong> Text to search for in post content</li>
+                                    <li><strong>Author:</strong> Username (without @) to filter by author</li>
+                                    <li><strong>Hashtag:</strong> Hashtag (without #) to filter by hashtags</li>
+                                    <li><strong>Date Range:</strong> Format "days:7" for last 7 days</li>
+                                    <li><strong>Engagement:</strong> Minimum number of likes/comments/shares</li>
+                                    <li><strong>Media Type:</strong> "image", "video", or "gif"</li>
+                                </ul>
+                                <p><strong>Filter Mode:</strong></p>
+                                <ul>
+                                    <li><strong>Include:</strong> Show only posts that match this filter</li>
+                                    <li><strong>Exclude:</strong> Hide posts that match this filter</li>
+                                </ul>
+                            </div>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        
+        <!-- Filter Action -->
+        <record id="action_social_media_filter" model="ir.actions.act_window">
+            <field name="name">Social Media Filters</field>
+            <field name="res_model">social_media.filter</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('user_id', '=', uid)]</field>
+            <field name="context">{'default_user_id': uid}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first filter!
+                </p>
+                <p>
+                    Filters help you customize which posts are fetched from your social media accounts.
+                    You can filter by keywords, authors, hashtags, engagement levels, and more.
+                </p>
+            </field>
+        </record>
+        
+        <!-- Filter Kanban View -->
+        <record id="view_social_media_filter_kanban" model="ir.ui.view">
+            <field name="name">social.media.filter.kanban</field>
+            <field name="model">social_media.filter</field>
+            <field name="arch" type="xml">
+                <kanban string="Social Media Filters">
+                    <field name="name"/>
+                    <field name="filter_type"/>
+                    <field name="filter_value"/>
+                    <field name="filter_mode"/>
+                    <field name="active"/>
+                    <field name="match_count"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_card oe_kanban_global_click">
+                                <div class="oe_kanban_content">
+                                    <div class="row">
+                                        <div class="col-8">
+                                            <strong><field name="name"/></strong>
+                                        </div>
+                                        <div class="col-4">
+                                            <span t-if="record.filter_mode.raw_value == 'include'" class="badge badge-success">Include</span>
+                                            <span t-if="record.filter_mode.raw_value == 'exclude'" class="badge badge-danger">Exclude</span>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <span class="badge badge-pill badge-info"><field name="filter_type"/></span>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <small class="text-muted">
+                                                <field name="filter_value"/>
+                                            </small>
+                                        </div>
+                                    </div>
+                                    <div class="row" t-if="record.match_count.raw_value">
+                                        <div class="col-12">
+                                            <small class="text-muted">
+                                                <field name="match_count"/> matches
+                                            </small>
+                                        </div>
+                                    </div>
+                                    <div class="row" t-if="!record.active.raw_value">
+                                        <div class="col-12">
+                                            <span class="badge badge-warning">Inactive</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+        
+        <!-- Add Kanban to action -->
+        <record id="action_social_media_filter" model="ir.actions.act_window">
+            <field name="view_mode">kanban,tree,form</field>
+        </record>
+        
+    </data>
+</odoo>

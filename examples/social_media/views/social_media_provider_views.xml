@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Provider Tree View -->
+        <record id="view_social_media_provider_tree" model="ir.ui.view">
+            <field name="name">social.media.provider.tree</field>
+            <field name="model">social_media.provider</field>
+            <field name="arch" type="xml">
+                <tree string="Social Media Providers">
+                    <field name="sequence" widget="handle"/>
+                    <field name="name"/>
+                    <field name="service"/>
+                    <field name="api_version"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="active" widget="boolean_toggle"/>
+                    <field name="account_ids" widget="many2many_tags"/>
+                </tree>
+            </field>
+        </record>
+        
+        <!-- Provider Form View -->
+        <record id="view_social_media_provider_form" model="ir.ui.view">
+            <field name="name">social.media.provider.form</field>
+            <field name="model">social_media.provider</field>
+            <field name="arch" type="xml">
+                <form string="Social Media Provider">
+                    <header>
+                        <button name="create_default_providers" type="object" string="Create Default Providers" class="btn-primary"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="action_view_accounts" type="object" class="oe_stat_button" icon="fa-users">
+                                <field name="account_ids" widget="statinfo" string="Accounts"/>
+                            </button>
+                        </div>
+                        
+                        <widget name="web_ribbon" title="Inactive" bg_color="bg-danger" attrs="{'invisible': [('active', '=', True)]}"/>
+                        
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" placeholder="Provider Name"/>
+                            </h1>
+                        </div>
+                        
+                        <group>
+                            <group>
+                                <field name="service"/>
+                                <field name="api_version"/>
+                                <field name="sequence"/>
+                                <field name="active"/>
+                                <field name="company_id" groups="base.group_multi_company"/>
+                            </group>
+                            <group>
+                                <field name="client_id" password="True"/>
+                                <field name="client_secret" password="True"/>
+                            </group>
+                        </group>
+                        
+                        <group string="API Configuration">
+                            <field name="oauth_authorize_url"/>
+                            <field name="oauth_token_url"/>
+                            <field name="api_base_url"/>
+                            <field name="scopes" widget="text"/>
+                        </group>
+                        
+                        <notebook>
+                            <page string="Connected Accounts">
+                                <field name="account_ids" readonly="1">
+                                    <tree>
+                                        <field name="display_name"/>
+                                        <field name="account_username"/>
+                                        <field name="user_id"/>
+                                        <field name="last_sync"/>
+                                        <field name="active" widget="boolean_toggle"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        
+        <!-- Provider Action -->
+        <record id="action_social_media_provider" model="ir.actions.act_window">
+            <field name="name">Social Media Providers</field>
+            <field name="res_model">social_media.provider</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first social media provider!
+                </p>
+                <p>
+                    Social media providers are platforms like Twitter, Facebook, etc.
+                    Configure them here to enable users to connect their accounts.
+                </p>
+            </field>
+        </record>
+        
+    </data>
+</odoo>

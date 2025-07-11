@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Account Tree View -->
+        <record id="view_social_media_account_tree" model="ir.ui.view">
+            <field name="name">social.media.account.tree</field>
+            <field name="model">social_media.account</field>
+            <field name="arch" type="xml">
+                <tree string="Social Media Accounts">
+                    <field name="display_name"/>
+                    <field name="service"/>
+                    <field name="account_username"/>
+                    <field name="user_id"/>
+                    <field name="last_sync"/>
+                    <field name="is_token_expired" widget="badge" decoration-danger="is_token_expired"/>
+                    <field name="active" widget="boolean_toggle"/>
+                    <button name="action_sync_following" type="object" string="Sync Following" icon="fa-refresh" class="btn-link"/>
+                    <button name="action_fetch_posts" type="object" string="Fetch Posts" icon="fa-download" class="btn-link"/>
+                </tree>
+            </field>
+        </record>
+        
+        <!-- Account Form View -->
+        <record id="view_social_media_account_form" model="ir.ui.view">
+            <field name="name">social.media.account.form</field>
+            <field name="model">social_media.account</field>
+            <field name="arch" type="xml">
+                <form string="Social Media Account">
+                    <header>
+                        <button name="action_sync_following" type="object" string="Sync Following" class="btn-primary" attrs="{'invisible': [('active', '=', False)]}"/>
+                        <button name="action_fetch_posts" type="object" string="Fetch Posts" class="btn-primary" attrs="{'invisible': [('active', '=', False)]}"/>
+                        <button name="action_refresh_token" type="object" string="Refresh Token" class="btn-secondary" attrs="{'invisible': [('is_token_expired', '=', False)]}"/>
+                    </header>
+                    
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="action_view_profiles" type="object" class="oe_stat_button" icon="fa-users">
+                                <field name="profile_ids" widget="statinfo" string="Profiles"/>
+                            </button>
+                            <button name="action_view_posts" type="object" class="oe_stat_button" icon="fa-comments">
+                                <field name="post_ids" widget="statinfo" string="Posts"/>
+                            </button>
+                        </div>
+                        
+                        <widget name="web_ribbon" title="Inactive" bg_color="bg-danger" attrs="{'invisible': [('active', '=', True)]}"/>
+                        <widget name="web_ribbon" title="Token Expired" bg_color="bg-warning" attrs="{'invisible': [('is_token_expired', '=', False)]}"/>
+                        
+                        <div class="oe_title">
+                            <h1>
+                                <field name="display_name"/>
+                            </h1>
+                        </div>
+                        
+                        <group>
+                            <group>
+                                <field name="provider_id" options="{'no_create': True}"/>
+                                <field name="service" readonly="1"/>
+                                <field name="account_name"/>
+                                <field name="account_username"/>
+                                <field name="user_id" readonly="1"/>
+                                <field name="active"/>
+                            </group>
+                            <group>
+                                <field name="external_account_id" readonly="1"/>
+                                <field name="last_sync" readonly="1"/>
+                                <field name="token_expiry" readonly="1"/>
+                                <field name="is_token_expired" readonly="1"/>
+                            </group>
+                        </group>
+                        
+                        <group string="Account Metadata" attrs="{'invisible': [('account_metadata', '=', False)]}">
+                            <field name="account_metadata" widget="ace" options="{'mode': 'json'}" readonly="1"/>
+                        </group>
+                        
+                        <notebook>
+                            <page string="Following">
+                                <field name="profile_ids" domain="[('profile_type', '=', 'following')]">
+                                    <tree>
+                                        <field name="display_name"/>
+                                        <field name="username"/>
+                                        <field name="last_fetched"/>
+                                        <field name="post_count"/>
+                                        <button name="action_view_posts" type="object" string="View Posts" icon="fa-comments"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            
+                            <page string="Recent Posts">
+                                <field name="post_ids" limit="50">
+                                    <tree>
+                                        <field name="author_display_name"/>
+                                        <field name="content"/>
+                                        <field name="posted_at"/>
+                                        <field name="engagement_stats"/>
+                                        <button name="action_open_post_url" type="object" string="Open" icon="fa-external-link"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="activity_ids" widget="mail_activity"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        
+        <!-- Account Action -->
+        <record id="action_social_media_account" model="ir.actions.act_window">
+            <field name="name">Social Media Accounts</field>
+            <field name="res_model">social_media.account</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('user_id', '=', uid)]</field>
+            <field name="context">{'default_user_id': uid}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Connect your first social media account!
+                </p>
+                <p>
+                    Connect your Twitter, Facebook, or other social media accounts
+                    to start fetching posts from people you follow.
+                </p>
+            </field>
+        </record>
+        
+        <!-- Account Kanban View -->
+        <record id="view_social_media_account_kanban" model="ir.ui.view">
+            <field name="name">social.media.account.kanban</field>
+            <field name="model">social_media.account</field>
+            <field name="arch" type="xml">
+                <kanban string="Social Media Accounts">
+                    <field name="display_name"/>
+                    <field name="service"/>
+                    <field name="account_username"/>
+                    <field name="last_sync"/>
+                    <field name="is_token_expired"/>
+                    <field name="active"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_card oe_kanban_global_click">
+                                <div class="oe_kanban_content">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <strong><field name="display_name"/></strong>
+                                        </div>
+                                        <div class="col-6">
+                                            <span class="badge badge-pill badge-info"><field name="service"/></span>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <field name="account_username"/>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <t t-if="record.last_sync.raw_value">
+                                                Last sync: <field name="last_sync"/>
+                                            </t>
+                                            <t t-else="">
+                                                Never synced
+                                            </t>
+                                        </div>
+                                    </div>
+                                    <div class="row" t-if="record.is_token_expired.raw_value">
+                                        <div class="col-12">
+                                            <span class="badge badge-warning">Token Expired</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+        
+        <!-- Add Kanban to action -->
+        <record id="action_social_media_account" model="ir.actions.act_window">
+            <field name="view_mode">kanban,tree,form</field>
+        </record>
+        
+    </data>
+</odoo>

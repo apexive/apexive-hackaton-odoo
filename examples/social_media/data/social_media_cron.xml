@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        
+        <!-- Cron job to refresh expired tokens -->
+        <record id="cron_refresh_expired_tokens" model="ir.cron">
+            <field name="name">Social Media: Refresh Expired Tokens</field>
+            <field name="model_id" ref="model_social_media_account"/>
+            <field name="state">code</field>
+            <field name="code">model.cron_refresh_expired_tokens()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">hours</field>
+            <field name="numbercall">-1</field>
+            <field name="doall">False</field>
+            <field name="active">True</field>
+        </record>
+        
+        <!-- Cron job to sync posts from all active accounts -->
+        <record id="cron_sync_posts" model="ir.cron">
+            <field name="name">Social Media: Sync Posts</field>
+            <field name="model_id" ref="model_social_media_account"/>
+            <field name="state">code</field>
+            <field name="code">model.cron_sync_posts()</field>
+            <field name="interval_number">30</field>
+            <field name="interval_type">minutes</field>
+            <field name="numbercall">-1</field>
+            <field name="doall">False</field>
+            <field name="active">False</field>
+        </record>
+        
+        <!-- Cron job to sync following lists -->
+        <record id="cron_sync_following" model="ir.cron">
+            <field name="name">Social Media: Sync Following Lists</field>
+            <field name="model_id" ref="model_social_media_account"/>
+            <field name="state">code</field>
+            <field name="code">
+active_accounts = model.search([('active', '=', True)])
+for account in active_accounts:
+    try:
+        account.action_sync_following()
+    except Exception as e:
+        pass
+            </field>
+            <field name="interval_number">6</field>
+            <field name="interval_type">hours</field>
+            <field name="numbercall">-1</field>
+            <field name="doall">False</field>
+            <field name="active">False</field>
+        </record>
+        
+    </data>
+</odoo>
