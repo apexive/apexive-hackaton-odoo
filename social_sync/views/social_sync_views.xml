@@ -1,0 +1,32 @@
+
+<odoo>
+  <record id="view_social_post_tree" model="ir.ui.view">
+    <field name="name">social.post.tree</field>
+    <field name="model">social.post</field>
+    <field name="arch" type="xml">
+      <tree>
+        <field name="name"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="view_social_post_form" model="ir.ui.view">
+    <field name="name">social.post.form</field>
+    <field name="model">social.post</field>
+    <field name="arch" type="xml">
+      <form>
+        <field name="name"/>
+        <field name="content"/>
+      </form>
+    </field>
+  </record>
+
+  <record id="action_social_post" model="ir.actions.act_window">
+    <field name="name">Social Posts</field>
+    <field name="res_model">social.post</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+  <menuitem id="menu_social_root" name="Social Media Sync"/>
+  <menuitem id="menu_social_post" name="Posts" parent="menu_social_root" action="action_social_post"/>
+</odoo>
